@@ -1,6 +1,10 @@
 # Nutanix snapshot skills
 
-> **In testing.** Built for a hands-on lab and checked offline only (dry runs and a classifier self-check). Not yet run against a live Prism Central. The v4 API version segment, request body fields and API key header name still need confirming on a real cluster.
+> **In testing.** Built for a hands-on lab. Live checks so far used one Prism Central, the Claude Code hook (matched to Nutanix MCP tools only) and the Nutanix API MCP server, with `NTNX_VMM_VERSION=v4.3`, `NTNX_DP_VERSION=v4.4` and `NTNX_PRISM_VERSION=v4.4`. The `v4.0` defaults have not been tested live.
+>
+> - **Passed:** a recovery point before `updateVmById` (the update used an invalid ETag so it would be rejected), using the VM's own project (one project tested); blocking when the VM lookup returns "not found"; blocking when recovery point creation fails (tested before the two guard and project fixes).
+> - **Not tested live:** restore, delete, power off, a second project, the OpenCode plugin and the shell command checks.
+> - **Known from the code:** with the `Bash` matcher, a command with an unmatched quote (for example a heredoc containing `isn't`) is blocked.
 
 Two agent skills for Claude Code and OpenCode that take Nutanix recovery points (local snapshots) of AHV VMs before an agent does something risky.
 
