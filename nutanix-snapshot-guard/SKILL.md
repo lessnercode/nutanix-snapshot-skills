@@ -10,7 +10,7 @@ The guard takes a recovery point before a destructive Nutanix VM tool call, then
 
 The guard also covers software updates and package changes made with `apt`, `apt-get`, `dnf`, `yum`, `zypper`, `snap`, `do-release-upgrade`, `unattended-upgrade`, and `unattended-upgrades`. APT index refreshes (`apt update` and `apt-get update`) are exempt. Over `ssh`, the same shell rules apply and the SSH hostname identifies the VM to snapshot. For local package commands, the guard uses `NTNX_SELF_VM` if set. Otherwise, it checks the DMI system vendor, then uses the product UUID on Nutanix hosts or the hostname if the UUID is unavailable. The guard allows the command if it cannot read the vendor or the vendor does not contain `Nutanix`.
 
-Install `nutanix-snapshot` beside the guard or set `NTNX_SNAPSHOT_SCRIPT` to its Python entry point. Configure the environment in the [snapshot skill](../nutanix-snapshot/SKILL.md). The guard allows the call if VM resolution returns exit `3` and blocks it if resolution or snapshot creation fails. Set `NTNX_GUARD_FAIL_OPEN=1` to allow calls after those failures, including missing environment configuration.
+Install `nutanix-snapshot` beside the guard or set `NTNX_SNAPSHOT_SCRIPT` to its Python entry point. Configure the environment in the [snapshot skill](../nutanix-snapshot/SKILL.md). The guard blocks the call if it cannot confirm the target VM (including a "not found" result, exit `3`) or if snapshot creation fails. Set `NTNX_GUARD_FAIL_OPEN=1` to allow calls after those failures, including missing environment configuration.
 
 | Variable | Value |
 | --- | --- |

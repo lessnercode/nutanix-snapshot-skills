@@ -166,7 +166,8 @@ def main():
         command = [sys.executable, script]
         resolved = subprocess.run(command + ["resolve", "--vm", vm], capture_output=True, text=True)
         if resolved.returncode == 3:
-            return 0
+            # "Not found" can also mean a wrong API version or path, so never allow it.
+            raise RuntimeError(f"Could not confirm target VM {vm!r}: the VM lookup returned not found")
         if resolved.returncode:
             raise RuntimeError(resolved.stderr.strip() or f"resolve exited {resolved.returncode}")
         vm_id = json.loads(resolved.stdout)["extId"]

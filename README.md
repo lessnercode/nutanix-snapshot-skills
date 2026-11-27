@@ -16,12 +16,15 @@ Python 3 standard library only. Prism Central v4 APIs only.
 ```bash
 export NTNX_PC_HOST=<prism-central-host>
 export NTNX_API_KEY=<service-account-api-key>
-export NTNX_PROJECT_EXT_ID=<project-uuid>   # otherwise recovery points land in the Default Project
 
 python3 nutanix-snapshot/scripts/ntnx_snapshot.py --dry-run --offline take --vm test-04 --reason resize
 python3 nutanix-snapshot/scripts/ntnx_snapshot.py take --vm test-04 --reason resize
 python3 nutanix-snapshot-guard/scripts/test_guard.py
+(cd nutanix-snapshot-guard/scripts && python3 -B -m unittest test_guard_main)
+(cd nutanix-snapshot/scripts && python3 -B -m unittest test_project)
 ```
+
+Each recovery point is created with the VM's own `projectExtId`. The guard blocks the action if it can't confirm the target VM.
 
 Install steps for the Claude Code hook and the OpenCode plugin are in [`nutanix-snapshot-guard/SKILL.md`](nutanix-snapshot-guard/SKILL.md).
 

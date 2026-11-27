@@ -19,7 +19,6 @@ Claude Code and OpenCode both read this skill. The script uses Python 3 and Pris
 | `NTNX_PC_HOST` | Required Prism Central hostname or IP. Port `9440` is assumed unless supplied. |
 | `NTNX_API_KEY` | Required project-scoped service account API key. |
 | `NTNX_API_KEY_HEADER` | API key header name. Defaults to `X-ntnx-api-key`. Confirm the name on the lab PC. |
-| `NTNX_PROJECT_EXT_ID` | Project UUID sent on recovery point creation. If unset, creation uses the Default Project and prints a warning. |
 | `NTNX_DP_VERSION` | Data Protection API version. Defaults to `v4.0`. |
 | `NTNX_VMM_VERSION` | VMM API version. Defaults to `v4.0`. |
 | `NTNX_PRISM_VERSION` | Prism task API version. Defaults to `v4.0`. |
@@ -28,7 +27,9 @@ Claude Code and OpenCode both read this skill. The script uses Python 3 and Pris
 
 ## Commands
 
-`resolve --vm <name-or-extId>` prints the VM extId and name as JSON.
+`take` reads the VM and sends its own `projectExtId` with the recovery point. If the VM read shows no project, it sends none and prints a warning. There is no project setting to configure.
+
+`resolve --vm <name-or-extId>` prints the VM extId, name and projectExtId as JSON.
 
 ```sh
 python3 scripts/ntnx_snapshot.py resolve --vm test-04

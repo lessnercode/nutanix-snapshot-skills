@@ -30,7 +30,12 @@ def resolve(request, vms, vm, offline):
         if len(matches) > 1:
             raise RuntimeError(f"Multiple VMs named {vm!r}. Use a VM extId.")
         match = matches[0] if matches else None
-    return {"extId": match["extId"], "name": match["name"]} if match else None
+        if match:  # read the full record so the project is not missed
+            match = request("GET", f"{vms}/{match['extId']}")["data"]
+    if not match:
+        return None
+    project = match.get("projectExtId") or (match.get("project") or {}).get("extId")
+    return {"extId": match["extId"], "name": match["name"], "projectExtId": project}
 
 
 def wait_for_task(request, tasks, task_id):
@@ -161,11 +166,11 @@ def main():
                 "recoveryPointType": "CRASH_CONSISTENT",
                 "vmRecoveryPoints": [{"vmExtId": vm["extId"]}],
             }
-            project = os.getenv("NTNX_PROJECT_EXT_ID")
-            if project:
-                body["projectExtId"] = project
+            # The recovery point always follows the VM's own project.
+            if vm.get("projectExtId"):
+                body["projectExtId"] = vm["projectExtId"]
             else:
-                print("Warning: NTNX_PROJECT_EXT_ID is unset. Using the Default Project.", file=sys.stderr)
+                print("Warning: no project found for this VM. Sending no projectExtId.", file=sys.stderr)
             path = recovery_points
             result["name"] = name
         else:
